@@ -1,0 +1,71 @@
+import java.util.Scanner;
+
+public class BankAccount
+{
+    private int number;
+    private double balance;
+    
+    public BankAccount(Scanner keyboard){
+        boolean invalid = true;
+        
+        while(invalid == true){
+            System.out.println("\nEnter the new account number:");
+            this.number = keyboard.nextInt();
+            
+            System.out.println("Enter the account's initial balance:");
+            this.balance = keyboard.nextDouble();
+            
+            if(this.number > 1000 || this.number <= 0 || this.number < 0)
+                System.out.println("\nInvalid account number. Please try again.");
+            else if(this.balance < 0)
+                System.out.println("\nInvalid balance. Value must be greater than zero.");
+                else
+                invalid = false;
+        }
+    }
+    
+    public int getNumber(){
+        return this.number;
+    }
+    public void setNumber(int number){
+        this.number = number;
+    }
+    public double getBalance(){
+        return this.balance;
+    }
+    public void setBalance(double balance){
+        this.balance = balance;
+    }
+    
+    public String toString(){
+        return "\nAccount number: " + this.number + "\n" +
+               "Account balance: $ " + this.balance;
+    }
+    
+    public void withdraw(double ammount){
+        if(this.balance < ammount){
+            this.balance = this.balance;
+            System.out.println("\nWithdrawal could not be completed due to insufficient funds.");
+        } else
+            this.balance = this.balance - ammount;
+    }
+    
+    public void deposit(double ammount){
+        if(ammount < 0){
+            this.balance = this.balance;
+            System.out.println("\nInvalid deposit ammount. Value must be greater than zero.");
+        } else
+            this.balance = this.balance + ammount;
+    }
+    
+    public void transfer(BankAccount receivingAccount, double ammount){
+        if(ammount < 0)
+            System.out.println("\nInvalid transfer ammount. Value must be greater than zero.");
+        else if(this.balance < ammount)
+            System.out.println("\nTransfer could not be completed due to insufficient funds.");
+            else{
+                this.balance = this.balance - ammount;
+                receivingAccount.setBalance((receivingAccount.getBalance() + ammount));
+            }
+    }
+}
