@@ -1,0 +1,20 @@
+import java.util.Scanner;
+
+public class AppConta
+{
+    public static void main(String args[]){
+    Scanner teclado = new Scanner(System.in);
+    
+    Biblioteca.limpa();
+    
+    ContaCorrente conta1 = new ContaCorrente(teclado);
+    ContaCorrente conta2 = new ContaCorrente(teclado);
+    
+    conta1.transferir(conta2, 1000);
+    
+    System.out.println(conta1.toString());
+    System.out.println(conta2.toString());
+    
+    System.out.println("\n" + conta1.digito());
+    }
+}
