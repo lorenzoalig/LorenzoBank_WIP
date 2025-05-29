@@ -2,9 +2,17 @@
  * This class creates instances of bank accounts with basic attributes and basic operations, such as deposit, withdrawal, and transfer (between accounts).
  * It was made as an exercise for the Object-Oriented Programming course at PUCRS.
  * 
+ * Account creation validations:
+ *      - The account number must be 1 to 3 digits long.
+ *      - The initial balance cannot be negative.
+ *      
+ * Operation validations:
+ *      - Deposit, withdrawal and transfer operations can only be completed if the account has sufficient funds.
+ * 
  * @lorenzoali
  * @v3_29.05.25
  */
+
 import java.util.Scanner;
 
 public class BankAccount
@@ -12,15 +20,15 @@ public class BankAccount
     private int number;
     private double balance;
     
-    public BankAccount(Scanner keyboard){
+    public BankAccount(Scanner input){
         boolean invalid = true;
         
         while(invalid == true){
             System.out.println("\nEnter the new account number:");
-            this.number = keyboard.nextInt();
+            this.number = input.nextInt();
             
             System.out.println("Enter the account's initial balance:");
-            this.balance = keyboard.nextDouble();
+            this.balance = input.nextDouble();
             
             if(this.number > 1000 || this.number <= 0 || this.number < 0)
                 System.out.println("\nInvalid account number. Please try again.");
@@ -49,30 +57,37 @@ public class BankAccount
                "Account balance: $ " + this.balance;
     }
     
-    public void withdraw(double ammount){
-        if(this.balance < ammount){
+    public void withdraw(double amount){
+        if(this.balance < amount){
             this.balance = this.balance;
             System.out.println("\nWithdrawal could not be completed due to insufficient funds.");
-        } else
-            this.balance = this.balance - ammount;
+        } else{
+            this.balance = this.balance - amount;
+            System.out.println("\nWithdrawal was successful. $" + amount + " has been withdrawn from account number: " + this.number + ".");
+        }
     }
     
-    public void deposit(double ammount){
-        if(ammount < 0){
+    public void deposit(double amount){
+        if(amount < 0){
             this.balance = this.balance;
             System.out.println("\nInvalid deposit ammount. Value must be greater than zero.");
-        } else
-            this.balance = this.balance + ammount;
+        } else{
+            this.balance = this.balance + amount;
+            System.out.println("\nDeposit was successful. $" + amount + " has been deposited into account number: " + this.number + ".");
+        }
     }
     
-    public void transfer(BankAccount receivingAccount, double ammount){
-        if(ammount < 0)
+    public void transfer(BankAccount receivingAccount, double amount){
+        if(amount < 0)
             System.out.println("\nInvalid transfer ammount. Value must be greater than zero.");
-        else if(this.balance < ammount)
+        else if(this.balance < amount)
             System.out.println("\nTransfer could not be completed due to insufficient funds.");
             else{
-                this.balance = this.balance - ammount;
-                receivingAccount.setBalance((receivingAccount.getBalance() + ammount));
+                this.balance = this.balance - amount;
+                receivingAccount.setBalance((receivingAccount.getBalance() + amount));
+                
+                System.out.println("\nTransfer was successful. $" + amount + " has been transferred from account number: " + this.number + 
+                                   ", into account number: " + receivingAccount.getNumber() + ".");
             }
     }
 }
