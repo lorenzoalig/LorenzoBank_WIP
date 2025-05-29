@@ -32,6 +32,7 @@ public class BankAccount
             
             if(this.number > 1000 || this.number <= 0 || this.number < 0)
                 System.out.println("\nInvalid account number. Please try again.");
+
             else if(this.balance < 0)
                 System.out.println("\nInvalid balance. Value must be greater than zero.");
                 else
