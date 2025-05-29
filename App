@@ -1,20 +1,38 @@
+/**
+ * Simple demonstration of account instances created using the BankAccount class and their operations.
+ * 
+ * @lorenzo
+ * @v1-23.04.25
+ */
+
 import java.util.Scanner;
 
-public class AppConta
+public class App
 {
     public static void main(String args[]){
-    Scanner teclado = new Scanner(System.in);
-    
-    Biblioteca.limpa();
-    
-    ContaCorrente conta1 = new ContaCorrente(teclado);
-    ContaCorrente conta2 = new ContaCorrente(teclado);
-    
-    conta1.transferir(conta2, 1000);
-    
-    System.out.println(conta1.toString());
-    System.out.println(conta2.toString());
-    
-    System.out.println("\n" + conta1.digito());
+        Scanner input = new Scanner(System.in);
+        
+        System.out.print("\f");
+        
+        BankAccount account1 = new BankAccount(input);
+        BankAccount account2 = new BankAccount(input);
+        
+        System.out.println(account1.toString());
+        System.out.println(account2.toString());
+        
+        account1.deposit(100);
+        
+        System.out.println(account1.toString());
+        
+        account2.withdraw(300);
+        
+        System.out.println(account2.toString());
+        
+        account1.transfer(account2, 1000);
+        
+        System.out.println(account1.toString());
+        System.out.println(account2.toString());
+        
+        System.out.println("\nDemonstration's shutting off.");
     }
-}
+} 
