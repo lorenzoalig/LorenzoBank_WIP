@@ -1,3 +1,10 @@
+/**
+ * This class creates instances of bank accounts with basic attributes and basic operations, such as deposit, withdrawal, and transfer (between accounts).
+ * It was made as an exercise for the Object-Oriented Programming course at PUCRS.
+ * 
+ * @lorenzoali
+ * @v3_29.05.25
+ */
 import java.util.Scanner;
 
 public class BankAccount
