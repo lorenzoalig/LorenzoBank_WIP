@@ -1,0 +1,128 @@
+/**
+ * This class serves as a database for all bank accounts created. It works
+ * as an object vector and includes the following methods:
+ * 
+ *      - Initializing the vector
+ *      - Inserting an account
+ *      - Locating an account with a code (returns BankAccount object)
+ *      - Deleting an account
+ *      - Rearranging files in the database (repositioning the vector to fill null elements)
+ *      - Sorting the vector [WIP]
+ *      - Printing the vector (to see all database)
+ *      
+ * Further documentation to be added for all methods.
+ * 
+ * @lorenzoali 
+ * @09.06.25
+ */
+
+import java.util.Scanner;
+
+public class DataBase
+{
+    private BankAccount[] accountFiles;
+    private int index;
+    
+    public DataBase(){
+        
+        this.index = 0;
+        this.accountFiles = null;
+    
+    }
+    
+    public void initializeVector(int size){
+        
+        this.accountFiles = new BankAccount[size];
+    
+    }
+       
+    public boolean insertAccount(BankAccount account){
+        
+        if(this.index >= accountFiles.length){
+            
+            System.out.println("\nError: Account could not be saved. Max number of accounts reached.");
+            return false;
+        
+        } else{
+            
+            this.accountFiles[index] = account;
+            this.index++;
+            
+            return true;
+            
+        }         
+        
+    }
+    
+    public BankAccount locateAccount(int code){
+        
+        for(int i = 0; i < this.accountFiles.length; i++){
+            
+            int accountCode = this.accountFiles[i].getCode();
+            
+            if(accountCode == code){
+            
+                return this.accountFiles[i];
+            
+            }
+        }
+        
+        System.out.println("\nError: Account does not exist.");
+        
+        return null;
+        
+    }
+    
+    public boolean deleteAccount(int code){
+        
+        BankAccount aux = locateAccount(code);
+        
+        for(int i = 0; i < this.accountFiles.length; i++){
+            
+            if(this.accountFiles[i] == aux){
+                    
+                    this.accountFiles[i] = null;
+                    return true;
+                    
+            }
+        }
+        
+        System.out.println("\nError: Account does not exist.");
+        return false;
+        
+    }
+
+    public void rearrangeFiles(){
+        
+        for(int i = 0; i < this.index; i++){
+            
+            if(this.accountFiles[i] == null){
+                
+                    for(int j = i; j < this.index; j++){
+                        
+                        this.accountFiles[j] = this.accountFiles[j + 1];
+                        
+                    }
+                    
+                    this.index--;
+            
+            }
+        }
+    }
+    
+    public void printFiles(){
+        
+        for(int i = 0; i < this.accountFiles.length; i++){
+            
+            if(this.accountFiles[i] == null){
+                
+                System.out.println("\nPosition " + (i + 1) + ": null.");
+                
+            }else {
+            
+                System.out.println(this.accountFiles[i].toString());
+            
+            }
+        }
+    }
+}
