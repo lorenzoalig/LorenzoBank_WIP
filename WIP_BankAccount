@@ -1,51 +1,60 @@
 /**
- * This class creates instances of bank accounts with basic attributes and basic operations, such as deposit, withdrawal, and transfer (between accounts).
- * It was made as an exercise for the Object-Oriented Programming course at PUCRS.
+ * This class creates instances of bank accounts with basic attributes and basic operations,such as deposit,
+ * withdrawal, and transfers between accounts.
  * 
- * Account creation validations:
- *      - The account number must be 1 to 3 digits long.
- *      - The initial balance cannot be negative.
- *      
- * Operation validations:
- *      - Deposit, withdrawal and transfer operations can only be completed if the account has sufficient funds.
+ * It includes the following attributes:
  * 
- * @lorenzoali
- * @v3_29.05.25
+ *  - Username (must be available)
+ *  - Password
+ *  - Account code
+ *  - Balance
+ * 
+ * During account creation, the class also checks if the username is available (in the database), automatically assigns
+ * an account code, and adds the account to the database.
+ * 
+ * 
+ * @lorenzoalig
+ * @10.06.25
  */
 
 import java.util.Scanner;
 
 public class BankAccount
 {
-    private int number;
+    private static int codeAux = 1;
+    private int code;
     private double balance;
+    private String username;
+    private String password;
     
-    public BankAccount(Scanner input){
-        boolean invalid = true;
+    public BankAccount(String username, String password){
         
-        while(invalid == true){
-            System.out.println("\nEnter the new account number:");
-            this.number = input.nextInt();
-            
-            System.out.println("Enter the account's initial balance:");
-            this.balance = input.nextDouble();
-            
-            if(this.number > 1000 || this.number <= 0 || this.number < 0)
-                System.out.println("\nInvalid account number. Please try again.");
-
-            else if(this.balance < 0)
-                System.out.println("\nInvalid balance. Value must be greater than zero.");
-                else
-                invalid = false;
-        }
+        this.code = codeAux + 100;
+        this.balance = 0;
+        this.username = username;
+        this.password = password;
+        
+        codeAux++;
+        
     }
     
-    public int getNumber(){
-        return this.number;
+    /**
+     * Returns the class variable "codeAux".
+     * Intentionally, there is no setter methor for this variable, as
+     * modifying it would interfere with the assignment of new account codes.
+     * This getter can be used to check how many accounts have been created
+     * using this class, even if they haven't been added to a database.
+     */
+    public int getcodeAux(){
+        return codeAux;
     }
-    public void setNumber(int number){
-        this.number = number;
+    public int getCode(){
+        return this.code;
     }
+    public void setCode(int code){
+        this.code = code;
+    }
+    
     public double getBalance(){
         return this.balance;
     }
@@ -53,9 +62,61 @@ public class BankAccount
         this.balance = balance;
     }
     
+    public String getUsername(){
+        return this.username;
+    }
+    public void setUsername(String username){
+        this.username = username;
+    }
+    
+    public String getPassword(){
+        return this.password;
+    }
+    public void setPassword(String password){
+        this.password = password;
+    }
+    
     public String toString(){
-        return "\nAccount number: " + this.number + "\n" +
+        return "\nUsername: " + this.username + "\n" +
+               "Account code: " + this.code + "\n" +
                "Account balance: $ " + this.balance;
+    }
+    
+    public static boolean createAccount(DataBase accountFiles, Scanner input){
+        
+        BankAccount temp;
+        String username = "";
+        String password;
+        boolean invalid = true;
+        
+        while(invalid == true){
+            
+            System.out.println("\nWelcome to account creation. Plase, enter a username: " + "\n" +
+                               "Or, [9] Quit.");
+            username = input.nextLine();
+            
+            if(username.equals("9"))
+                return false;
+            
+            else if(accountFiles.checkUsername(username) == true)
+                invalid = false;
+                
+                else{
+                    System.out.println("\nUsername taken. Please try again.\n");    
+                    invalid = true;
+                }
+        }
+        
+        System.out.println("\nPlease, enter a password:");
+        password = input.nextLine();
+        
+        temp = new BankAccount(username, password);
+        
+        if(accountFiles.insertAccount(temp))
+            return true;
+        
+        else
+            return false;
     }
     
     public void withdraw(double amount){
@@ -64,7 +125,7 @@ public class BankAccount
             System.out.println("\nWithdrawal could not be completed due to insufficient funds.");
         } else{
             this.balance = this.balance - amount;
-            System.out.println("\nWithdrawal was successful. $" + amount + " has been withdrawn from account number: " + this.number + ".");
+            System.out.println("\nWithdrawal was successful. $" + amount + " has been withdrawn from account code: " + this.code + ".");
         }
     }
     
@@ -74,7 +135,7 @@ public class BankAccount
             System.out.println("\nInvalid deposit ammount. Value must be greater than zero.");
         } else{
             this.balance = this.balance + amount;
-            System.out.println("\nDeposit was successful. $" + amount + " has been deposited into account number: " + this.number + ".");
+            System.out.println("\nDeposit was successful. $" + amount + " has been deposited into account code: " + this.code + ".");
         }
     }
     
@@ -87,8 +148,8 @@ public class BankAccount
                 this.balance = this.balance - amount;
                 receivingAccount.setBalance((receivingAccount.getBalance() + amount));
                 
-                System.out.println("\nTransfer was successful. $" + amount + " has been transferred from account number: " + this.number + 
-                                   ", into account number: " + receivingAccount.getNumber() + ".");
+                System.out.println("\nTransfer was successful. $" + amount + " has been transferred from account code: " + this.code + 
+                                   ", into account code: " + receivingAccount.getCode() + ".");
             }
-    }
+    } 
 }
