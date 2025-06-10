@@ -14,15 +14,18 @@ public class DataBaseTest
         
         server.initializeVector(6);
         
-        BankAccount account1 = new BankAccount();
-        BankAccount account2 = new BankAccount();
-        BankAccount account3 = new BankAccount();
-        BankAccount account4 = new BankAccount();
+        BankAccount account1 = new BankAccount("username", "password");
+        BankAccount account2 = new BankAccount("username", "password");
+        BankAccount account3 = new BankAccount("username", "password");
+        BankAccount account4 = new BankAccount("username", "password");
         
-        server.insertAccount(account1);
-        server.insertAccount(account2);
-        server.insertAccount(account3);
         server.insertAccount(account4);
+        server.insertAccount(account3);
+        server.insertAccount(account2);
+        server.insertAccount(account1);
+        
+        BankAccount account5 = new BankAccount("username", "password");
+        BankAccount account6 = new BankAccount("username", "password");
         
         server.printFiles();
         
@@ -32,28 +35,34 @@ public class DataBaseTest
         
         server.printFiles();
         
-        System.out.println("\nRearranged ===========================================================");
+        System.out.println("\nRearranged ==========================================================");
         
         server.rearrangeFiles();
         
         server.printFiles();
         
-        System.out.println("\nAccount 3 reinserted =================================================");
+        System.out.println("\nAccount 3 reinserted ====================================================");
         
         server.insertAccount(account3);
         
         server.printFiles();
         
-        System.out.println("\nInserting 2 new accounts =============================================");
+        System.out.println("\nInserting 2 new accounts ====================================================");
         
-        server.insertAccount(account1);
+        server.insertAccount(account6);
+        server.insertAccount(account5);
+        
+        server.printFiles();
+        
+        System.out.println("\nTrying to surpass max array size ====================================================");
+        
         server.insertAccount(account1);
         
         server.printFiles();
         
-        System.out.println("\nTrying to surpass max array size ======================================");
+        System.out.println("\nSorting vector ==========================================================");
         
-        server.insertAccount(account1);
+        server.lorenzoSortFilesCode();
         
         server.printFiles();
     }
