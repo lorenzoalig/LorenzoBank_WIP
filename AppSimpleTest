@@ -1,0 +1,75 @@
+/**
+ * Simple demo of BankAccount and DataBase integration.
+ * 
+ * It also demonstrates accounts being created (with validation if username already taken), saved to the database, and used in
+ * some basic operations.
+ * 
+ * 
+ * @lorenzoalig
+ * @10.06.25
+ */
+
+import java.util.Scanner;
+
+public class AppSimpleTest
+{
+    public static void main(String args[]){
+        Scanner input = new Scanner(System.in);
+        
+        System.out.print("\f");
+        
+        DataBase accountData = new DataBase();
+        
+        accountData.initializeVector(4);    
+        
+        
+        System.out.println("Creating first account ======================================");
+        
+        BankAccount.createAccount(accountData, input);
+        
+        System.out.println("\n\nCreating second account =====================================");
+        
+        BankAccount.createAccount(accountData, input);
+        
+        System.out.println("\n\nCreating third account ======================================");
+        
+        BankAccount.createAccount(accountData, input);
+        
+        
+        
+        System.out.println("\fPrinting database vector =======================================================");
+        
+        accountData.printFiles();
+        
+        
+        
+        System.out.println("\n\nDepositing $500 to account code 103 ================================================");
+        
+        accountData.locateAccount(103).deposit(500);
+        
+        System.out.println(accountData.locateAccount(103).toString());
+        
+        
+        
+        System.out.println("\n\nWithdrawing $300 from account code 103 =============================================");
+        
+        accountData.locateAccount(103).withdraw(300);
+        
+        System.out.println(accountData.locateAccount(103).toString());
+        
+        
+        
+        System.out.println("\n\nTransfering $100 from account code 103 to 102 ======================================");
+        
+        accountData.locateAccount(103).transfer(accountData.locateAccount(102), 100);
+        
+        
+        
+        System.out.println("\n\nPrinting full database vector ======================================================");
+        
+        accountData.printFiles();
+        
+        
+        System.out.println("\n\nDemonstration's shutting off.");
+    }
+} 
