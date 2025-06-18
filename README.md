@@ -6,3 +6,5 @@ The user can create a new account or log in to an existing one, with all necessa
 The application includes a BankAccount class with several methods, including withdrawal, deposit, and transferring between accounts, as well as checking balance, creating accounts, and more.
 
 It also includes a DataBase class that uses an object vector to store and manage all account information, with methods to insert, delete, and locate accounts, as well as rearrange and sort the array.
+
+Disclaimer: This is not the final version. Its purpose is for testing only. Further documentation to be added.
