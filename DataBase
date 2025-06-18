@@ -13,7 +13,7 @@
  * Further documentation to be added for all methods.
  * 
  * @lorenzoalig
- * @10.06.25
+ * @18.06.25
  */
 
 import java.util.Scanner;
@@ -192,5 +192,29 @@ public class DataBase
         }
         
         return true;
+    }
+    
+    public boolean loginToAccount(String username, String password){
+        
+        String accountPassword;
+        
+        if(checkUsername(username)){
+            
+            return false;
+            
+        } else {
+            
+            accountPassword = locateAccount(username).getPassword();
+            
+            if(password.equals(accountPassword)){
+                                
+                return true;
+                
+            } else {
+                                
+                return false;
+                
+            }
+        }
     }
 }
