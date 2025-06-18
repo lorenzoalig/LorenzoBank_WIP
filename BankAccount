@@ -12,9 +12,10 @@
  * During account creation, the class also checks if the username is available (in the database), automatically assigns
  * an account code, and adds the account to the database.
  * 
+ * Disclaimer: This is not the final version. Its purpose is for testing only. Further documentation to be added.
  * 
  * @lorenzoalig
- * @10.06.25
+ * @18.06.25
  */
 
 import java.util.Scanner;
@@ -91,8 +92,10 @@ public class BankAccount
         
         while(invalid == true){
             
-            System.out.println("\nWelcome to account creation. Plase, enter a username: " + "\n" +
-                               "Or, [9] Quit.");
+            input.nextLine();       // Cleans buffer.
+            
+            System.out.println("\fWelcome to account creation!" + "\n\n" +
+                               "Plase, enter a username, or [9] to quit:");
             username = input.nextLine();
             
             if(username.equals("9"))
@@ -132,10 +135,10 @@ public class BankAccount
     public void deposit(double amount){
         if(amount < 0){
             this.balance = this.balance;
-            System.out.println("\nInvalid deposit ammount. Value must be greater than zero.");
+            System.out.println("\nInvalid deposit ammount. Value must be greater than zero.\n");
         } else{
             this.balance = this.balance + amount;
-            System.out.println("\nDeposit was successful. $" + amount + " has been deposited into account code: " + this.code + ".");
+            System.out.println("\nDeposit was successful. $" + amount + " has been deposited into account code: " + this.code + ".\n");
         }
     }
     
