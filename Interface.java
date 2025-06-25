@@ -12,30 +12,37 @@ import java.util.Scanner;
  * Disclaimer: This is not the final version. Its purpose is for testing only. Further documentation to be added.
  * 
  * @lorenzoalig
- * @18.06.25
+ * @24.06.25
  */
 
 public class Interface
 {
     Scanner input = new Scanner(System.in);
-    private DataBase data;
+    // Database
+    private DataBase database;
+    
+    //Username and password curently logged in
     private String currentUsername;
     private String currentPassword;
     
     
     public Interface(){
         
-        this.data = null;
+        this.database = null;
+        this.currentUsername = null;
+        this.currentPassword = null;
         
     }
     
+    // Getter and setter for DataBase
     public DataBase getDataBase(){
-        return this.data;
+        return this.database;
     }
     public void setDataBase(DataBase newData){
-        this.data = newData;
+        this.database = newData;
     }
     
+    // Getter and setter for currentUsername (username logged in)
     public String getCurrentUsername(){
         return this.currentUsername;
     }
@@ -43,6 +50,7 @@ public class Interface
         this.currentUsername = username;
     }
     
+    // Getter and setter for currentPassword (password logged in)
     public String getCurrentPassword(){
         return this.currentPassword;
     }
@@ -50,11 +58,12 @@ public class Interface
         this.currentPassword = password;
     }
     
+    // Boot the program
     public void boot(int size){
         
-        this.data = new DataBase();
+        this.database = new DataBase();
         
-        this.data.initializeVector(5);
+        this.database.initializeDatabase(5);
         
     }
     
@@ -63,8 +72,8 @@ public class Interface
     }
     
     public void printWelcomeUser(){
-        System.out.println("Welcome back " + this.currentUsername + "! This is your home page." + "\n\n" +
-                           "Your account code is: [" + data.locateAccount(this.currentUsername).getCode() + "]\n");
+        System.out.println("Welcome back, " + this.currentUsername + "! This is your home page." + "\n\n" +
+                           "\tYour account code is: [" + database.locateAccount(this.currentUsername).getCode() + "]\n");
     }
     
     public void printGoodbye(){
@@ -81,6 +90,7 @@ public class Interface
             
         System.out.println("[1] Create an Account." + "\n" +
                            "[2] Log in to my Account." + "\n" +
+                           "[8] Admin login [NOT FUNCTIONAL]." + "\n" +
                            "[9] Quit.\n");
     }
     
@@ -91,7 +101,9 @@ public class Interface
                            "[2] Deposit." + "\n" +
                            "[3] Withdrawal." + "\n" +
                            "[4] Transfer." + "\n" +
-                           "[5] Delete account." + "\n" +
+                           "[5] Change password [NOT FUNCTIONAL]." + "\n" +
+                           "[6] Change username [NOT FUNCTIONAL]." + "\n" +
+                           "[7] Delete account." + "\n" +
                            "[8] Logoff." + "\n" +
                            "[9] Quit.\n");
     }
@@ -99,175 +111,247 @@ public class Interface
     /**
      * Starts 1st menu screen routine and RETURNS:
      * 
-     *      [1] If 1st menu should repeat;
-     *      [2] If program should proceed to 2nd menu;
-     *      [3] Quits program.
+     *      [1] If program should proceed to 2nd menu;
+     *      [0] If 1st menu should repeat;
+     *      [-1] Quits program immediately.
      */
     
-    public int executeMenu1(){
+    public int executeWelcomeMenu(){
         
         int option = input.nextInt();
         
         switch(option){
             
-            case 1: //CREATE ACCOUNT
+            case 1: // CREATE ACCOUNT
+                createAccount();
+                return 0;
                 
-                if(BankAccount.createAccount(data, input))
-                    System.out.println("\nAccount was created succesfully.\n");
+            case 2: // LOGIN TO ACCOUNT
+                if(loginToAccount())
+                    return 1;
                 else
-                    System.out.println("\nError: account could not be created.\n");
+                    return 0;
                 
-                return 1;
+            case 8: // ADMIN LOGIN [NOT FUNCTIONAL]
+                return 0;
                 
-            case 2: //LOGIN TO ACCOUNT
+            case 9: // QUIT
+                return -1;
                 
-                System.out.println("\fWelcome to account login!");
-                
-                input.nextLine();
-                String username = promptUsername();
-                String password = promptPassword();
-                
-                if(this.data.loginToAccount(username, password)){
-                    
-                    System.out.println("\nLogin successful.\n");
-                    
-                    this.currentUsername = username;
-                    this.currentPassword = password;
-                    
-                    return 2;
-                    
-                } else {
-                    
-                    System.out.println("\nIncorret username or password.\n");
-                    return 1;
-                    
-                }
-                
-            case 9:
-                
-                printGoodbye();
-                return 3;
-                
-            default:
-                    
-                    System.out.println("\nInvalid option. Please try again.");
-                    return 1;
+            default:   
+                System.out.println("\fError: invalid option.\n");
+                return 0;
         }
     }
     
     /**
      * Starts 2nd menu screen routine and RETURNS:
      * 
-     *      [1] If 2nd menu should repeat;
-     *      [2] If program should return to 1st menu;
-     *      [4] Quits program.
+     *      [1] If program should return to 1st menu;
+     *      [0] If 2nd menu should repeat;
+     *      [-1] Quits program.
      */
     
-    public int executeMenu2(){
-        
-        double value;
+    public int executeUserMenu(){
         int option = input.nextInt();
-        
-        BankAccount account = data.locateAccount(this.currentUsername);
+        BankAccount account = this.database.locateAccount(this.currentUsername);
         
         switch(option){
             
-            case 1:     //CHECK BALANCE
-                
-                double balance;
-                balance = account.getBalance();
-                
-                System.out.println("\nAccount balance: $ " + balance + "\n");
-                return 1;
+            case 1: //CHECK BALANCE
+                checkBalance(account);
+                return 0;
 
-            case 2:     //DEPOSIT
+            case 2: //DEPOSIT
+                depositToAccount(account);
+                return 0;
                 
-                System.out.println("\nPlease enter the deposit amount:");
+            case 3: //WITHDRAWAL
+                withdrawFromAccount(account);
+                return 0;
                 
-                value = input.nextDouble();
-                account.deposit(value);
-                
-                return 1;
-                
-            case 3:     //WITHDRAWAL
-                
-                System.out.println("\nPlease enter the withdrawal amount:");
-                
-                value = input.nextDouble();
-                account.withdraw(value);
-                
-                return 1;
-                
-            case 4:     //TRANSFER
-                
-                System.out.println("\nPlease inform the receiving account's code:");
-                
-                int receiverCode = input.nextInt();
-                BankAccount receiverAccount = data.locateAccount(receiverCode);
-                
-                if(receiverAccount != null){
-                    
-                    System.out.println("\nPlease enter the transfer amount:");
-                    
-                    value = input.nextDouble();
-                    
-                    account.transfer(receiverAccount, value);
-                    
-                }
-                
-                return 1;
+            case 4: //TRANSFER
+                transferFromAccount(account);
+                return 0;
             
-            case 5:     //DELETE ACCOUNT
-                
-                System.out.println("\nAre you sure you want to delete this account?" + "\n" +
-                                   "[1] Yes" + "\n" +
-                                   "[2] No");
-                
-                option = input.nextInt();
-                int accountCode;
-                
-                if(option == 1){
-                    
-                    accountCode = account.getCode();
-                    
-                    if(data.deleteAccount(accountCode)){
-                        System.out.println("\nAccount was deleted successfully.\n");
-                        return 2;
-                    } else{
-                        return 1;
-                    }
-                } else {
-                    clearScreen();
+            case 5: //DELETE ACCOUNT
+                if(deleteThisAccount(account))
                     return 1;
-                }
+                else
+                    return 0;
             
-            case 8:     //LOGOFF
-                
-                clearScreen();
-                return 2;
+            case 8: //LOGOFF
+                logoffThisAccount();
+                return 1;
             
-            case 9:     //QUIT
-                
-                printGoodbye();
-                return 3;
+            case 9: //QUIT
+                return -1;
                 
             default:
-                
-                System.out.println("Invalid option. Please Try again.");
-                return 1;
+                System.out.println("\fError: invalid option.\n");
+                return 0;
         }
     }
     
-    public String promptUsername(){
+    public void createAccount(){
         
-        System.out.println("\nPlease enter username:");
+        BankAccount account;
+        String username = "";
+        String password;
+        boolean invalid = true;
         
-        return this.input.nextLine();
+        System.out.println("\fWelcome to account creation!\n");
+        
+        while(invalid == true){
+            input.nextLine();       // Cleans buffer.
+            
+            System.out.println("Plase, enter a username, or [8] to return:");
+            username = input.nextLine();
+            
+            if(this.database.checkUsername(username))
+                invalid = false; 
+            else{
+                System.out.println("\nUsername taken. Please try again.");    
+                invalid = true;
+            }
+        }
+        
+        if(username.equals("8")){
+            System.out.println("\fReturning to home screen...\n");
+        } else{
+            System.out.println("\nPlease, enter a password:");
+            password = input.nextLine();
+            
+            account = new BankAccount(username, password);
+            
+            if(this.database.insertAccount(account)){
+                System.out.println("\fAccount was created succesfully.\n");
+            } else{
+                System.out.println("\fError: account could not be created.\n");
+            }
+        }
     }
     
-    public String promptPassword(){
+    public boolean loginToAccount(){
+            input.nextLine();
+            
+            System.out.println("\fWelcome to account login!");
+            
+            String username = promptString("username");
+            String password = promptString("password");
+            
+            if(this.database.validateLogin(username, password)){
+                
+                System.out.println("\fLogin successful!\n");
+                
+                this.currentUsername = username;
+                this.currentPassword = password;
+                
+                return true;
+                
+            } else {
+                
+                System.out.println("\fIncorret username or password.\n");
+                return false;
+                
+            }
+    }
+    
+    public void checkBalance(BankAccount account){
+        double balance;
+        balance = account.getBalance();
         
-        System.out.println("\nPlease enter password:");
+        System.out.println("\f" + this.currentUsername + ", your account balance is:" + "\n\n" +
+                           "\t" + "$ " + balance + "\n");
+    }
+    
+    public void depositToAccount(BankAccount account){
+        System.out.println("\fDeposit selected.");
+        
+        promptString("the deposit amount");
+        double value = input.nextDouble();
+        
+        if(account.deposit(value))
+            System.out.println("\fDeposit was successful." + "\n\n" +
+                               "\t$" + value + " has been deposited into your account, " + account.getUsername() + ".\n"); 
+        else
+            System.out.println("\fInvalid deposit ammount. Value must be greater than zero.\n");      
+    }
+    
+    public void withdrawFromAccount(BankAccount account){
+        System.out.println("\fWithdrawal selected.");
+        
+        promptString("the withdrawal amount");       
+        double value = input.nextDouble();
+        
+        if(value <= 0)
+            System.out.println("\fInvalid deposit ammount. Value must be greater than zero.\n"); 
+        else if(account.withdraw(value))
+            System.out.println("\fWithdrawal was successful." + "\n\n" +
+                               "\t$" + value + " has been withdrawn from your account, " + account.getUsername() + ".\n");
+            else
+                System.out.println("\fWithdrawal could not be completed due to insufficient funds.\n");
+    }
+    
+    public void transferFromAccount(BankAccount account){
+        System.out.println("\fTransfer selected.");
+        
+        promptString("the receiving account's code");
+        int receiverCode = input.nextInt();
+        double value;
+        
+        BankAccount receiverAccount = this.database.locateAccount(receiverCode);
+        
+        if(receiverAccount == null)
+            System.out.println("\fError: Account does not exist.\n"); 
+        else{
+            promptString("the transfer amount");;
+            value = input.nextDouble();
+            
+            if(value <= 0)
+                System.out.println("\fInvalid transfer ammount. Value must be greater than zero.\n");
+            else if(account.transfer(receiverAccount, value))
+                System.out.println("\fTransfer was successful." + "\n\n" +
+                                   "$" + value + " has been transferred from your account, " + account.getUsername() + ".\n\n" +
+                                   "\tSender account: [" + account.getCode() + "]" + "\n" +
+                                   "\tReceiver account: [" + receiverAccount.getCode() + "]\n");
+                else
+                    System.out.println("\fTransfer could not be completed due to insufficient funds.\n");
+        }
+    }
+    
+    public boolean deleteThisAccount(BankAccount account){
+        System.out.println("\nAre you sure you want to delete this account?" + "\n" +
+                                   "[1] Yes" + "\n" +
+                                   "[2] No");
+        int option = input.nextInt();
+        int accountCode; 
+        
+        if(option == 1){
+            accountCode = account.getCode();
+            
+            if(database.deleteAccount(accountCode)){
+                System.out.println("\fAccount was deleted successfully. Redirecting to home screen...\n");
+                return true;
+            } else{
+                System.out.println("\fError: Could not delete account.\n");
+                return false;
+            }
+        } else {
+            clearScreen();
+            return false;
+        }
+    }
+    
+    public void logoffThisAccount(){
+        this.currentUsername = null;
+        this.currentPassword = null;
+        
+        System.out.println("\fLoggin off. Redirecting to home screen...\n");
+    }
+    
+    public String promptString(String name){
+        System.out.println("\nPlease enter " + name + ":");
         
         return this.input.nextLine();
     }
