@@ -3,7 +3,7 @@
  * with as an object vector and includes the following methods:
  * 
  *      - Initializing the vector
- *      - Inserting an account
+ *      - Creating and inserting accounts
  *      - Locating an account with a code (returns BankAccount object)
  *      - Deleting an account
  *      - Rearranging files in the database (repositioning the vector to fill null elements)
@@ -13,16 +13,15 @@
  * Disclaimer: This is not the final version. Its purpose is for testing only. Further documentation to be added.
  * 
  * @lorenzoalig
- * @18.06.25
+ * @24.06.25
  */
-
-import java.util.Scanner;
 
 public class DataBase
 {
     private BankAccount[] accountFiles;
     private int index;
     
+    // Constructor
     public DataBase(){
         
         this.index = 0;
@@ -30,17 +29,33 @@ public class DataBase
     
     }
     
-    public void initializeVector(int size){
+    // Getter for a copy of the database vector for iteration
+    public BankAccount[] getAccountFiles(){
+        BankAccount[] copyOfAccountFiles = new BankAccount[this.index];
+        
+        for(int i = 0; i < this.index; i++){
+            copyOfAccountFiles[i] = this.accountFiles[i];
+        }
+        
+        return copyOfAccountFiles;
+    }
+    
+    // Getter for the index
+    public int getIndex(){
+        return this.index;
+    }
+    
+    // Intialize the database vector
+    public void initializeDatabase(int size){
         
         this.accountFiles = new BankAccount[size];
     
     }
-       
+    
+    // Insert an account on the database
     public boolean insertAccount(BankAccount account){
-        
         if(this.index >= accountFiles.length){
             
-            System.out.println("\nError: Account could not be saved. Max number of accounts reached.");
             return false;
         
         } else{
@@ -50,13 +65,12 @@ public class DataBase
             
             return true;
             
-        }         
-        
-        // accountFiles[pro] = x;
-        // pro++;
-        
+        }        
     }
     
+    // System.out.println("\nError: Account could not be saved. Max number of accounts reached.");
+    
+    // Locate an account on the database via code
     public BankAccount locateAccount(int code){
         
         int accountCode;
@@ -75,12 +89,12 @@ public class DataBase
             }
         }
         
-        System.out.println("\nError: Account does not exist.");
-        
         return null;
-
     }
     
+    // System.out.println("\nError: Account does not exist.");
+
+    // Locate an account on the database via code
     public BankAccount locateAccount(String username){
         
         String accountName;
@@ -88,6 +102,7 @@ public class DataBase
         for(int i = 0; i < this.accountFiles.length; i++){
             
             if(this.accountFiles[i] != null){
+                
                 accountName = this.accountFiles[i].getUsername();
                 
                 if(username.equals(accountName)){
@@ -98,17 +113,17 @@ public class DataBase
             }
         }
         
-        System.out.println("\nError: Account does not exist.");
-        
         return null;
-
     }
     
+    // System.out.println("\nError: Account does not exist.");
+    
+    // Delete an account from the database via code
     public boolean deleteAccount(int code){
         
         BankAccount aux = locateAccount(code);
         
-        for(int i = 0; i < this.accountFiles.length; i++){
+        for(int i = 0; i < this.index; i++){
             
             if(this.accountFiles[i] == aux){
                     
@@ -118,11 +133,10 @@ public class DataBase
             }
         }
         
-        System.out.println("\nError: Account does not exist.");
         return false;
-        
     }
-
+    
+    // Rearrange database to fill null elements
     public void rearrangeFiles(){
         
         for(int i = 0; i < this.index; i++){
@@ -136,12 +150,12 @@ public class DataBase
                     }
                     
                     this.index--;
-            
             }
         }
     }
     
-    public void lorenzoSortFilesCode(){
+    // Sort accounts in database by code
+    public void sortFilesByCode(){
         
         for(int i = 0; i < this.accountFiles.length; i++){
             
@@ -159,42 +173,43 @@ public class DataBase
         }
     }
     
-    public void printFiles(){
+    // Print entire database
+    public void printDatabase(){
         
         for(int i = 0; i < this.accountFiles.length; i++){
             
             if(this.accountFiles[i] == null){
                 
-                System.out.println("\nPosition " + (i + 1) + ": null.");
+                System.out.println("\nAccount{NULL, Position:" + (i + 1) + "}");
                 
             }else {
             
-                System.out.println(this.accountFiles[i].toString());
+                System.out.println("\n" + this.accountFiles[i].toString());
             
             }
         }
     }
     
+    // Check if username is available
     public boolean checkUsername(String username){          // Checks the account vector to see if username is already taken. If so, returns false.
         
         String accountName;
         
-        for(int i = 0; i < this.accountFiles.length; i++){
+        for(int i = 0; i < this.index; i++){
+                       
+            accountName = this.accountFiles[i].getUsername();
             
-            if(this.accountFiles[i] != null){
+            if(username.equals(accountName))
                 
-                accountName = this.accountFiles[i].getUsername();
-                
-                if(username.equals(accountName))
-                    
-                    return false;
-            }
+                return false;
+        
         }
         
         return true;
     }
     
-    public boolean loginToAccount(String username, String password){
+    // Validate account login attempt
+    public boolean validateLogin(String username, String password){
         
         String accountPassword;
         

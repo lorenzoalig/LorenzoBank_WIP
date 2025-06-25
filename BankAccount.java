@@ -15,40 +15,40 @@
  * Disclaimer: This is not the final version. Its purpose is for testing only. Further documentation to be added.
  * 
  * @lorenzoalig
- * @18.06.25
+ * @24.06.25
  */
-
-import java.util.Scanner;
 
 public class BankAccount
 {
-    private static int codeAux = 1;
+    private static int tracker = 1;
     private int code;
     private double balance;
     private String username;
     private String password;
     
+    // Constructor
     public BankAccount(String username, String password){
         
-        this.code = codeAux + 100;
+        this.code = tracker + 100;
         this.balance = 0;
         this.username = username;
         this.password = password;
         
-        codeAux++;
+        tracker++;
         
     }
     
     /**
-     * Returns the class variable "codeAux".
+     * Returns the class variable "tracker".
      * Intentionally, there is no setter methor for this variable, as
      * modifying it would interfere with the assignment of new account codes.
-     * This getter can be used to check how many accounts have been created
-     * using this class, even if they haven't been added to a database.
+     * This getter can be used to check how many accounts have been created using this class, even if they haven't been added to a database.
      */
-    public int getcodeAux(){
-        return codeAux;
+    public int getTracker(){
+        return tracker;
     }
+    
+    // Getter and setter for account code
     public int getCode(){
         return this.code;
     }
@@ -56,6 +56,7 @@ public class BankAccount
         this.code = code;
     }
     
+    // Getter and setter for account balance
     public double getBalance(){
         return this.balance;
     }
@@ -63,6 +64,7 @@ public class BankAccount
         this.balance = balance;
     }
     
+    // Getter and setter for account username
     public String getUsername(){
         return this.username;
     }
@@ -70,6 +72,7 @@ public class BankAccount
         this.username = username;
     }
     
+    // Getter and setter for account password
     public String getPassword(){
         return this.password;
     }
@@ -77,82 +80,44 @@ public class BankAccount
         this.password = password;
     }
     
+    // toString method
     public String toString(){
-        return "\nUsername: " + this.username + "\n" +
-               "Account code: " + this.code + "\n" +
-               "Account balance: $ " + this.balance;
+        return "Account{username: " + this.username + ", code: " + this.code + ", balance: " + this.balance + "}";
     }
     
-    public static boolean createAccount(DataBase accountFiles, Scanner input){
-        
-        BankAccount temp;
-        String username = "";
-        String password;
-        boolean invalid = true;
-        
-        while(invalid == true){
-            
-            input.nextLine();       // Cleans buffer.
-            
-            System.out.println("\fWelcome to account creation!" + "\n\n" +
-                               "Plase, enter a username, or [9] to quit:");
-            username = input.nextLine();
-            
-            if(username.equals("9"))
-                return false;
-            
-            else if(accountFiles.checkUsername(username) == true)
-                invalid = false;
-                
-                else{
-                    System.out.println("\nUsername taken. Please try again.\n");    
-                    invalid = true;
-                }
-        }
-        
-        System.out.println("\nPlease, enter a password:");
-        password = input.nextLine();
-        
-        temp = new BankAccount(username, password);
-        
-        if(accountFiles.insertAccount(temp))
-            return true;
-        
-        else
-            return false;
-    }
-    
-    public void withdraw(double amount){
+    public boolean withdraw(double amount){
         if(this.balance < amount){
-            this.balance = this.balance;
-            System.out.println("\nWithdrawal could not be completed due to insufficient funds.");
+            return false;
         } else{
             this.balance = this.balance - amount;
-            System.out.println("\nWithdrawal was successful. $" + amount + " has been withdrawn from account code: " + this.code + ".");
+            return true;
         }
     }
     
-    public void deposit(double amount){
-        if(amount < 0){
-            this.balance = this.balance;
-            System.out.println("\nInvalid deposit ammount. Value must be greater than zero.\n");
+    public boolean deposit(double amount){
+        if(amount <= 0){
+            return false;
         } else{
             this.balance = this.balance + amount;
-            System.out.println("\nDeposit was successful. $" + amount + " has been deposited into account code: " + this.code + ".\n");
+            return true;
         }
     }
     
-    public void transfer(BankAccount receivingAccount, double amount){
-        if(amount < 0)
-            System.out.println("\nInvalid transfer ammount. Value must be greater than zero.");
+    public boolean transfer(BankAccount receivingAccount, double amount){
+        if(amount <= 0)
+            return false;
         else if(this.balance < amount)
-            System.out.println("\nTransfer could not be completed due to insufficient funds.");
+            return false;
             else{
                 this.balance = this.balance - amount;
                 receivingAccount.setBalance((receivingAccount.getBalance() + amount));
                 
-                System.out.println("\nTransfer was successful. $" + amount + " has been transferred from account code: " + this.code + 
-                                   ", into account code: " + receivingAccount.getCode() + ".");
+                return true;
             }
     } 
 }
+
+
+
+
+
