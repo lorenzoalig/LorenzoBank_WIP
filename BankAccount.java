@@ -85,6 +85,7 @@ public class BankAccount
         return "Account{username: " + this.username + ", code: " + this.code + ", balance: " + this.balance + "}";
     }
     
+    // Withdraw money from the account
     public boolean withdraw(double amount){
         if(this.balance < amount){
             return false;
@@ -94,6 +95,7 @@ public class BankAccount
         }
     }
     
+    // Deposit money into the account
     public boolean deposit(double amount){
         if(amount <= 0){
             return false;
@@ -103,6 +105,7 @@ public class BankAccount
         }
     }
     
+    // Transfer money between accounts
     public boolean transfer(BankAccount receivingAccount, double amount){
         if(amount <= 0)
             return false;
