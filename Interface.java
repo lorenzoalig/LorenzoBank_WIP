@@ -101,8 +101,8 @@ public class Interface
                            "[2] Deposit." + "\n" +
                            "[3] Withdrawal." + "\n" +
                            "[4] Transfer." + "\n" +
-                           "[5] Change password [NOT FUNCTIONAL]." + "\n" +
-                           "[6] Change username [NOT FUNCTIONAL]." + "\n" +
+                           "[5] Change password." + "\n" +
+                           "[6] Change username." + "\n" +
                            "[7] Delete account." + "\n" +
                            "[8] Logoff." + "\n" +
                            "[9] Quit.\n");
@@ -158,23 +158,35 @@ public class Interface
         
         switch(option){
             
-            case 1: //CHECK BALANCE
+            case 1: // CHECK BALANCE
                 checkBalance(account);
                 return 0;
 
-            case 2: //DEPOSIT
+            case 2: // DEPOSIT
                 depositToAccount(account);
                 return 0;
                 
-            case 3: //WITHDRAWAL
+            case 3: // WITHDRAWAL
                 withdrawFromAccount(account);
                 return 0;
                 
-            case 4: //TRANSFER
+            case 4: // TRANSFER
                 transferFromAccount(account);
                 return 0;
             
-            case 5: //DELETE ACCOUNT
+            case 5: // CHANGE PASSWORD
+                if(changePassword(account))
+                    return 1;
+                else
+                    return 0;
+                
+            case 6: // CHANGE USERNAME
+                if(changeUsername(account))
+                    return 1;
+                else
+                    return 0;
+                
+            case 7: // DELETE ACCOUNT
                 if(deleteThisAccount(account))
                     return 1;
                 else
@@ -227,34 +239,34 @@ public class Interface
             if(this.database.insertAccount(account)){
                 System.out.println("\fAccount was created succesfully.\n");
             } else{
-                System.out.println("\fError: account could not be created.\n");
+                System.out.println("\fError: account could not be created due to insufficient storage.\n");
             }
         }
     }
     
     public boolean loginToAccount(){
-            input.nextLine();
+        input.nextLine();
+        
+        System.out.println("\fWelcome to account login!");
+        
+        String username = promptString("username");
+        String password = promptString("password");
+        
+        if(this.database.validateLogin(username, password)){
             
-            System.out.println("\fWelcome to account login!");
+            System.out.println("\fLogin successful!\n");
             
-            String username = promptString("username");
-            String password = promptString("password");
+            this.currentUsername = username;
+            this.currentPassword = password;
             
-            if(this.database.validateLogin(username, password)){
-                
-                System.out.println("\fLogin successful!\n");
-                
-                this.currentUsername = username;
-                this.currentPassword = password;
-                
-                return true;
-                
-            } else {
-                
-                System.out.println("\fIncorret username or password.\n");
-                return false;
-                
-            }
+            return true;
+            
+        } else {
+            
+            System.out.println("\fError: incorret username or password.\n");
+            return false;
+            
+        }
     }
     
     public void checkBalance(BankAccount account){
@@ -275,7 +287,7 @@ public class Interface
             System.out.println("\fDeposit was successful." + "\n\n" +
                                "\t$" + value + " has been deposited into your account, " + account.getUsername() + ".\n"); 
         else
-            System.out.println("\fInvalid deposit ammount. Value must be greater than zero.\n");      
+            System.out.println("\fError: invalid deposit ammount. Value must be greater than zero.\n");      
     }
     
     public void withdrawFromAccount(BankAccount account){
@@ -285,12 +297,12 @@ public class Interface
         double value = input.nextDouble();
         
         if(value <= 0)
-            System.out.println("\fInvalid deposit ammount. Value must be greater than zero.\n"); 
+            System.out.println("\fError: invalid deposit ammount. Value must be greater than zero.\n"); 
         else if(account.withdraw(value))
             System.out.println("\fWithdrawal was successful." + "\n\n" +
                                "\t$" + value + " has been withdrawn from your account, " + account.getUsername() + ".\n");
             else
-                System.out.println("\fWithdrawal could not be completed due to insufficient funds.\n");
+                System.out.println("\fError: withdrawal could not be completed due to insufficient funds.\n");
     }
     
     public void transferFromAccount(BankAccount account){
@@ -332,14 +344,81 @@ public class Interface
             
             if(database.deleteAccount(accountCode)){
                 System.out.println("\fAccount was deleted successfully. Redirecting to home screen...\n");
+                
+                this.database.rearrangeFiles();
+                
                 return true;
             } else{
-                System.out.println("\fError: Could not delete account.\n");
+                System.out.println("\fError: could not delete account.\n");
                 return false;
             }
         } else {
-            clearScreen();
+            System.out.println("\fAccount deletion cancelled.\n");
             return false;
+        }
+    }
+    
+    public boolean changePassword(BankAccount account){
+        input.nextLine();
+        
+        System.out.println("\fPassword change.");
+        
+        String password = promptString("current password");
+        String passwordAux = account.getPassword();
+        
+        if(!password.equals(passwordAux)){
+            System.out.println("\fError: incorrect password.\n");
+            return false;
+        } else{
+            password = promptString("new password");
+            
+            if(password.equals(passwordAux)){
+                System.out.println("\fError: new password must be different from current password.\n");
+                return false;
+            } else{
+                System.out.println("\nPlease repeat new password:");
+                passwordAux = input.nextLine();
+                
+                if(!password.equals(passwordAux)){
+                    System.out.println("\fError: passwords did not match.\n");
+                    return false;
+                }
+                else{
+                    account.setPassword(password);
+                    System.out.println("\fPassword updated successfully. Redirecting to home screen...\n");
+                    return true;
+                }
+            }
+        }
+    }
+    
+    public boolean changeUsername(BankAccount account){
+        input.nextLine();
+        
+        System.out.println("\fUsername change.");
+        
+        String newUsername = promptString("new username");
+        
+        if(newUsername.equals(account.getUsername())){
+            System.out.println("\fError: new username must be different from current username.\n");
+            return false;
+        } else if(!this.database.checkUsername(newUsername)){
+            System.out.println("\fError: username is not available.\n");
+            return false;
+        } else{
+            System.out.println("\nAre you sure you want to change account username?" + "\n" +
+                                   "[1] Yes" + "\n" +
+                                   "[2] No");
+            int option = input.nextInt();
+            
+            if(option == 1){
+                account.setUsername(newUsername);
+                System.out.println("\fUsername updated successfully. Redirecting to home screen...\n");
+                return true;
+            } else{
+                System.out.println("\fUsername change cancelled.\n");
+                return false;
+            }
         }
     }
     
