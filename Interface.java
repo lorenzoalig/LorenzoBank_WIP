@@ -12,7 +12,7 @@ import java.util.Scanner;
  * Disclaimer: This is not the final version. Its purpose is for testing only. Further documentation to be added.
  * 
  * @lorenzoalig
- * @01.07.25
+ * @10.07.25
  */
 
 public class Interface
@@ -61,11 +61,10 @@ public class Interface
     
     // Boot the program
     public void boot(int size){
-        
+
         this.database = new DataBase();
-        
         this.database.initializeDatabase(size);
-        
+
     }
     
     public void printWelcome(){
@@ -129,8 +128,8 @@ public class Interface
 
         System.out.println("Please select the desired operation:");
             
-        System.out.println("[1] Show database." + "\n" +
-                           "[2] Show account." + "\n" +
+        System.out.println("[1] Show account." + "\n" +
+                           "[2] Show database." + "\n" +
                            "[3] Delete account." + "\n" +
                            "[4] Deposit to an account [ILLEGAL]." + "\n" +
                            "[5] Transfer between accounts [ILLEGAL]." + "\n" +
@@ -272,27 +271,29 @@ public class Interface
         
         switch(option){
             
-            case 1: // SHOW DATABASE
-                
-                adminShowDatabase();
-                return 0;
-
-            case 2: // SHOW ACCOUNT
+            case 1: // ADMIN - SHOW ACCOUNT
                 
                 adminShowAccount();
                 return 0;
+
+            case 2: // ADMIN - SHOW DATABASE
                 
-            case 3: // DELETE ACCOUNT
+                adminShowDatabase();
+                return 0;
+                
+            case 3: // ADMIN - DELETE ACCOUNT
                 
                 adminDeleteAccount();
                 return 0;
                 
-            case 4: // DEPOSIT
-                ;
+            case 4: // ADMIN - DEPOSIT
+                
+                adminDeposit();
                 return 0;
             
-            case 5: // TRANSFER
-                ;
+            case 5: // ADMIN - TRANSFER
+                
+                adminTransfer();
                 return 0;
                 
             case 6: // CHANGE USERNAME
@@ -519,7 +520,7 @@ public class Interface
                 } else{
 
                     clearScreen();
-                    System.out.println("Transfer could not be completed due to insufficient funds.\n");
+                    System.out.println("Error: transfer could not be completed due to insufficient funds.\n");
 
                 }
         }
@@ -707,8 +708,13 @@ public class Interface
                 clearScreen();
                 System.out.println("Error: account does not exist.\n");
 
-            } else
+            } else{
+
+                clearScreen();
+                System.out.println("Printing account...");
                 System.out.println("\n" + account.toString() + "\n");
+
+            }
 
         } else if(option == 2){
 
@@ -741,7 +747,7 @@ public class Interface
         BankAccount account;
 
         clearScreen();
-        System.out.println("Account deletion - [admin]." + "\n" +
+        System.out.println("[ADMIN] Account deletion." + "\n" +
                            "\nWould you like to delete an account by [1]Username or [2]Number:");
 
         int option = input.nextInt();
@@ -779,9 +785,7 @@ public class Interface
                 clearScreen();
                 System.out.println("Error: account does not exist.\n");
 
-            } else{
-                
-                if(database.deleteAccount(account.getCode())){
+            } else if(database.deleteAccount(account.getCode())){
 
                     database.rearrangeFiles();
                     
@@ -793,12 +797,98 @@ public class Interface
                     clearScreen();
                     System.out.println("Error: account could not be deleted.\n");
                 }
-            }
-            
+        
         } else{
-            
+
             clearScreen();
             System.out.println("Error: invalid option.\n");
+        }
+    }
+
+    public void adminDeposit(){
+
+        clearScreen();
+        System.out.println("[ADMIN] Deposit selected.");
+        
+        BankAccount account;
+        double value;
+        int code = promptInt("the account code to deposit to");
+
+        account = database.locateAccount(code);
+
+        if(account == null){
+            
+            clearScreen();
+            System.out.println("Error: account does not exist.\n");
+
+        } else{
+
+            value = promptDouble("the amount to deposit");
+            
+            if(account.deposit(value)){
+
+                clearScreen();
+                System.out.println("Deposit was successful." + "\n\n" +
+                                   "\t$" + value + " has been deposited into " + account.getUsername() + "'s account [" + account.getCode() + "].\n");
+
+            } else{
+
+                clearScreen();
+                System.out.println("Error: invalid deposit ammount. Value must be greater than zero.\n");
+            }
+        }
+
+    }
+
+    public void adminTransfer(){
+
+        clearScreen();
+        System.out.println("[ADMIN] Transfer selected.");
+        
+        BankAccount accountSender, accountReceiver;
+        double value;
+        int code = promptInt("the account code to transfer from");
+
+        accountSender = database.locateAccount(code);
+
+        if(accountSender == null){
+            
+            clearScreen();
+            System.out.println("Error: sender account does not exist.\n");
+
+        } else{
+        
+            code = promptInt("the account code to transfer to");
+            accountReceiver = database.locateAccount(code);
+
+            if(accountReceiver == null){
+
+                clearScreen();
+                System.out.println("Error: receiver account does not exist.\n");
+                
+            } else{
+
+                value = promptDouble("the amount to deposit");
+
+                if(value <= 0){
+
+                    clearScreen();
+                    System.out.println("Error: transfer amount must be greater than zero.\n");
+                
+                } else if(accountSender.transfer(accountReceiver, value)){
+
+                    clearScreen();
+                    System.out.println("Transfer was successful." + "\n\n" +
+                                       "$" + value + " has been transferred from " + accountSender.getUsername() + "'s account into " + accountReceiver.getUsername() + "'s account." + "\n\n" +
+                                       "\tSender account: [" + accountSender.getCode() + "]" + "\n" +
+                                       "\tReceiver account: [" + accountReceiver.getCode() + "]\n");
+
+                    } else{
+
+                        clearScreen();
+                        System.out.println("Error: transfer could not be completed due to insufficient funds.\n");
+                    }
+            }
         }
     }
 
@@ -817,19 +907,28 @@ public class Interface
         return this.input.nextInt();
 
     }
+
+    public double promptDouble(String prompt){
+
+        System.out.println("\nPlease enter " + prompt + ":");
+        
+        return this.input.nextDouble();
+
+    }
     
     public void clearScreen(){
 
-        // System.out.print("\f");            // Clears terminal in BlueJ.
+        // System.out.print("\f");                  // Clears terminal in BlueJ.
         
-        // try {                              // Clears terminal in CMD.
-        //     ProcessBuilder pb = new ProcessBuilder("cmd", "/c", "cls"); // Windows 
-        //     pb.inheritIO().start().waitFor();
-        // } catch (IOException | InterruptedException e) {
-        //     e.printStackTrace();
-        // }
-        
-        System.out.print("\033[H\033[2J");  // Clears terminal with ANSI Escape code (in consoles that support it, e.g. VSCode)
-        System.out.flush();
+        try {                                       // Clears terminal in CMD - kinda works for VSCode terminal aswell =D
+            ProcessBuilder pb = new ProcessBuilder("cmd", "/c", "cls"); // Windows 
+            pb.inheritIO().start().waitFor();
+        } catch (Exception e) {
+            System.out.println("\n[could not clear console]\n");
+            e.printStackTrace();
+        }
+
+        // System.out.print("\033[H\033[2J");       // Clears terminal with ANSI Escape code (in consoles that support it, e.g. VSCode)
+        // System.out.flush();
     }
 }

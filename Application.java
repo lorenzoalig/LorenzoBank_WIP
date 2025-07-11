@@ -4,7 +4,7 @@
  * Disclaimer: This is not the final version. Its purpose is for testing only. Further documentation to be added.
  * 
  * @lorenzoalig
- * @01.07.25
+ * @10.07.25
  */
 
 public class Application
