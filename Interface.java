@@ -12,7 +12,7 @@ import java.util.Scanner;
  * Disclaimer: This is not the final version. Its purpose is for testing only. Further documentation to be added.
  * 
  * @lorenzoalig
- * @10.07.25
+ * @15.07.25
  */
 
 public class Interface
@@ -297,11 +297,13 @@ public class Interface
                 return 0;
                 
             case 6: // CHANGE USERNAME
-                ;
+                
+                adminChangeUsername();
                 return 0;
                 
             case 7: // CHANGE PASSWORD
-                ;
+                
+                adminChangePassword();
                 return 0;
             
             case 8: //LOGOFF
@@ -319,7 +321,7 @@ public class Interface
         }
     }
     
-    public void createAccount(){
+    public void createAccount(){        // FIXME: Improve account creation feedback and fluidity.
         
         BankAccount account;
         String username = "";
@@ -600,7 +602,7 @@ public class Interface
                 if(!password.equals(passwordAux)){
 
                     clearScreen();
-                    System.out.println("Error: passwords did not match.\n");
+                    System.out.println("Error: new password did not match.\n");
 
                     return false;
 
@@ -622,7 +624,7 @@ public class Interface
         input.nextLine();
         
         clearScreen();
-        System.out.println("Username change.");
+        System.out.println("Username change selected.");
         
         String newUsername = promptString("new username");
         
@@ -636,7 +638,7 @@ public class Interface
         } else if(!this.database.checkUsername(newUsername)){
 
             clearScreen();
-            System.out.println("Error: username is not available.\n");
+            System.out.println("Error: username is already taken.\n");
 
             return false;
 
@@ -888,6 +890,116 @@ public class Interface
                         clearScreen();
                         System.out.println("Error: transfer could not be completed due to insufficient funds.\n");
                     }
+            }
+        }
+    }
+
+    public void adminChangeUsername(){
+
+        clearScreen();
+        System.out.println("[ADMIN] Username change selected.");
+        
+        BankAccount account;
+        int code = promptInt("the account code to change username");
+        account = database.locateAccount(code);
+
+        if(account == null){
+            
+            clearScreen();
+            System.out.println("Error: account does not exist.\n");
+
+        } else{
+
+            input.nextLine();
+
+            String newUsername = promptString("new username");
+            
+            if(newUsername.equals(account.getUsername())){
+
+                clearScreen();
+                System.out.println("Error: new username must be different from current username.\n");
+
+            } else if(!this.database.checkUsername(newUsername)){
+
+                clearScreen();
+                System.out.println("Error: new username is already taken.\n");
+
+                } else{
+
+                    System.out.println("\nAre you sure you want to change this account's username?" + "\n" +
+                                        "[1] Yes" + "\n" +
+                                        "[2] No");
+                    int option = input.nextInt();
+                    
+                    if(option == 1){
+
+                        account.setUsername(newUsername);
+                        
+                        clearScreen();
+                        System.out.println("Username updated successfully.\n");
+
+                    } else if(option == 2){
+
+                        clearScreen();
+                        System.out.println("Username change cancelled.\n");
+
+                        } else{
+
+                            clearScreen();
+                            System.out.println("Error: invalid option. Username change cancelled.\n");
+
+                        }
+            }
+        }
+    }
+
+    public void adminChangePassword(){
+
+        
+        
+        clearScreen();
+        System.out.println("[ADMIN] Password change selected.");
+        
+        BankAccount account;
+        int code = promptInt("the account code to change password");
+        account = database.locateAccount(code);
+        
+        if(account == null){
+            
+            clearScreen();
+            System.out.println("Error: account does not exist.\n");
+
+        } else{
+        
+            input.nextLine();
+
+            String password = promptString("new password");
+            String passwordAux = account.getPassword();
+            
+            if(password.equals(passwordAux)){
+
+                clearScreen();
+                System.out.println("Error: new password must be different from current password.\n");
+
+
+            } else{
+
+                System.out.println("\nPlease repeat new password:");
+                passwordAux = input.nextLine();
+                
+                if(!password.equals(passwordAux)){
+
+                    clearScreen();
+                    System.out.println("Error: new password did not match.\n");
+
+                } else{
+
+                    account.setPassword(password);
+
+                    clearScreen();
+                    System.out.println("Password updated successfully.\n");
+
+                }
             }
         }
     }
