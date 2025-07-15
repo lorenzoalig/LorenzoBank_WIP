@@ -13,7 +13,7 @@
  * Disclaimer: This is not the final version. Its purpose is for testing only. Further documentation to be added.
  * 
  * @lorenzoalig
- * @24.06.25
+ * @01.07.25
  */
 
 public class DataBase
@@ -34,7 +34,9 @@ public class DataBase
         BankAccount[] copyOfAccountFiles = new BankAccount[this.index];
         
         for(int i = 0; i < this.index; i++){
+            
             copyOfAccountFiles[i] = this.accountFiles[i];
+
         }
         
         return copyOfAccountFiles;
@@ -54,6 +56,7 @@ public class DataBase
     
     // Insert an account on the database
     public boolean insertAccount(BankAccount account){
+
         if(this.index >= accountFiles.length){
             
             return false;
@@ -64,7 +67,6 @@ public class DataBase
             this.index++;
             
             return true;
-            
         }        
     }
     
@@ -180,11 +182,11 @@ public class DataBase
             
             if(this.accountFiles[i] == null){
                 
-                System.out.println("\nAccount{NULL, Position:" + (i + 1) + "}");
+                System.out.println("Account{NULL, Position:" + (i + 1) + "}");
                 
             }else {
             
-                System.out.println("\n" + this.accountFiles[i].toString());
+                System.out.println(this.accountFiles[i].toString());
             
             }
         }

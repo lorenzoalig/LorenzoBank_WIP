@@ -4,16 +4,16 @@
  * Disclaimer: This is not the final version. Its purpose is for testing only. Further documentation to be added.
  * 
  * @lorenzoalig
- * @24.06.25
+ * @10.07.25
  */
 
-public class BankApp
+public class Application
 {
     public static void main(String args[]){
         
         Interface program = new Interface();
         
-        program.boot(5);
+        program.boot(10);
         
         startRoutine(program);
         
@@ -22,6 +22,7 @@ public class BankApp
     public static void startRoutine(Interface program){
         
         boolean quit = false;
+        boolean back = false;
         program.clearScreen();
         
         do{
@@ -29,16 +30,20 @@ public class BankApp
             program.printOptions1();
             
             switch(program.executeWelcomeMenu()){
+                
                 case -1:
+
                     quit = true;
                     break;
                     
                 case 0:
+
                     quit = false;
                     break;
                     
                 case 1:
-                    boolean back = false;
+
+                    back = false;
                     program.printWelcomeUser();
                     
                     while(!back && !quit){
@@ -60,6 +65,33 @@ public class BankApp
                         }
                     }
                     break;
+
+                case 2:
+
+                    back = false;
+                    program.printWelcomeAdmin();
+
+                    while(!quit && !back){
+                        
+                        program.printOptionsAdmin();
+
+                        switch(program.executeAdminMenu()){
+
+                            case -1:
+                                quit = true;
+                                break;
+
+                            case 0:
+                                quit = false;
+                                break;
+
+                            case 1:
+                                back = true;
+                                break;
+                        }
+                    }
+                    break;
+
             }
         }while(!quit);
         
