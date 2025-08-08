@@ -18,7 +18,7 @@
  * @24.06.25
  */
 
-public class BankAccount
+public class Account
 {
     private static int tracker = 1;
     private int code;
