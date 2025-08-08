@@ -7,7 +7,7 @@ import java.util.Scanner;
  *      Note: Account creation employs validations to check if username is already taken or available. 
  * 
  * After logging in, the user can access all account information and execute multiple procedures, all of which are detailed in
- * the BankAccount and DataBase classes.
+ * the Account and DataBase classes.
  * 
  * Disclaimer: This is not the final version. Its purpose is for testing only. Further documentation to be added.
  * 
@@ -15,9 +15,10 @@ import java.util.Scanner;
  * @15.07.25
  */
 
-public class Interface
-{
-    Scanner input = new Scanner(System.in);
+public class LorenzoBank
+{   
+    // Scanner class
+    private Scanner input;
     
     // Database
     private DataBase database;
@@ -27,8 +28,10 @@ public class Interface
     private String currentPassword;
     
     
-    public Interface(){
+    public LorenzoBank(){
         
+        input = new Scanner(System.in);
+
         this.database = null;
         this.currentUsername = null;
         this.currentPassword = null;
@@ -65,6 +68,88 @@ public class Interface
         this.database = new DataBase();
         this.database.initializeDatabase(size);
 
+        startRoutine();
+
+    }
+
+    public void startRoutine(){
+        
+        boolean quit = false;
+        boolean back = false;
+        clearScreen();
+        
+        do{
+            printWelcome();
+            printOptions1();
+            
+            switch(executeWelcomeMenu()){
+                
+                case -1:
+
+                    quit = true;
+                    break;
+                    
+                case 0:
+
+                    quit = false;
+                    break;
+                    
+                case 1:
+
+                    back = false;
+                    printWelcomeUser();
+                    
+                    while(!back && !quit){
+                        
+                        printOptions2();
+                        
+                        switch(executeUserMenu()){
+                            case -1:
+                                quit = true;
+                                break;
+                                
+                            case 0:
+                                back = false;
+                                break;
+                                
+                            case 1:
+                                back = true;
+                                break;
+                        }
+                    }
+                    break;
+
+                case 2:
+
+                    back = false;
+                    printWelcomeAdmin();
+
+                    while(!quit && !back){
+                        
+                        printOptionsAdmin();
+
+                        switch(executeAdminMenu()){
+
+                            case -1:
+                                quit = true;
+                                break;
+
+                            case 0:
+                                quit = false;
+                                break;
+
+                            case 1:
+                                back = true;
+                                break;
+                        }
+                    }
+                    break;
+
+            }
+        }while(!quit);
+        
+        printGoodbye();
+        
     }
     
     public void printWelcome(){
@@ -94,7 +179,7 @@ public class Interface
 
     }
     
-    public void printLoadingScreen(){   
+    public void printLoadingScreen(){   // FIXME: No loading screen yet.
     }
     
     public void printOptions1(){
@@ -196,7 +281,7 @@ public class Interface
     public int executeUserMenu(){
 
         int option = input.nextInt();
-        BankAccount account = this.database.locateAccount(this.currentUsername);
+        Account account = this.database.locateAccount(this.currentUsername);
         
         switch(option){
             
@@ -323,7 +408,7 @@ public class Interface
     
     public void createAccount(){        // FIXME: Improve account creation feedback and fluidity.
         
-        BankAccount account;
+        Account account;
         String username = "";
         String password;
         boolean invalid = true;
@@ -355,7 +440,7 @@ public class Interface
             System.out.println("\nPlease, enter a password:");
             password = input.nextLine();
             
-            account = new BankAccount(username, password);
+            account = new Account(username, password);
             
             if(this.database.insertAccount(account)){
 
@@ -425,7 +510,7 @@ public class Interface
         }
     }
 
-    public void checkBalance(BankAccount account){
+    public void checkBalance(Account account){
 
         double balance;
         balance = account.getBalance();
@@ -436,7 +521,7 @@ public class Interface
 
     }
     
-    public void depositToAccount(BankAccount account){
+    public void depositToAccount(Account account){
 
         clearScreen();
         System.out.println("Deposit selected.");
@@ -458,7 +543,7 @@ public class Interface
         }
     }
     
-    public void withdrawFromAccount(BankAccount account){
+    public void withdrawFromAccount(Account account){
 
         clearScreen();
         System.out.println("Withdrawal selected.");
@@ -486,7 +571,7 @@ public class Interface
 
     }
     
-    public void transferFromAccount(BankAccount account){
+    public void transferFromAccount(Account account){
 
         double value;
 
@@ -495,7 +580,7 @@ public class Interface
         
         int receiverCode = promptInt("the receiving account's code");
 
-        BankAccount receiverAccount = this.database.locateAccount(receiverCode);
+        Account receiverAccount = this.database.locateAccount(receiverCode);
         
         if(receiverAccount == null){
 
@@ -528,7 +613,7 @@ public class Interface
         }
     }
     
-    public boolean deleteThisAccount(BankAccount account){
+    public boolean deleteThisAccount(Account account){
 
         System.out.println("\nAre you sure you want to delete this account?" + "\n" +
                                    "[1] Yes" + "\n" +
@@ -566,7 +651,7 @@ public class Interface
         }
     }
     
-    public boolean changePassword(BankAccount account){
+    public boolean changePassword(Account account){
 
         input.nextLine();
         
@@ -619,7 +704,7 @@ public class Interface
         }
     }
     
-    public boolean changeUsername(BankAccount account){
+    public boolean changeUsername(Account account){
 
         input.nextLine();
         
@@ -691,7 +776,7 @@ public class Interface
 
     public void adminShowAccount(){
 
-        BankAccount account;
+        Account account;
         
         System.out.println("\nWould you like to search account by [1]Username or [2]Number?");
 
@@ -746,7 +831,7 @@ public class Interface
     
     public void adminDeleteAccount(){
 
-        BankAccount account;
+        Account account;
 
         clearScreen();
         System.out.println("[ADMIN] Account deletion." + "\n" +
@@ -812,7 +897,7 @@ public class Interface
         clearScreen();
         System.out.println("[ADMIN] Deposit selected.");
         
-        BankAccount account;
+        Account account;
         double value;
         int code = promptInt("the account code to deposit to");
 
@@ -847,7 +932,7 @@ public class Interface
         clearScreen();
         System.out.println("[ADMIN] Transfer selected.");
         
-        BankAccount accountSender, accountReceiver;
+        Account accountSender, accountReceiver;
         double value;
         int code = promptInt("the account code to transfer from");
 
@@ -899,7 +984,7 @@ public class Interface
         clearScreen();
         System.out.println("[ADMIN] Username change selected.");
         
-        BankAccount account;
+        Account account;
         int code = promptInt("the account code to change username");
         account = database.locateAccount(code);
 
@@ -960,7 +1045,7 @@ public class Interface
         clearScreen();
         System.out.println("[ADMIN] Password change selected.");
         
-        BankAccount account;
+        Account account;
         int code = promptInt("the account code to change password");
         account = database.locateAccount(code);
         

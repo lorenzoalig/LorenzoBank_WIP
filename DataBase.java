@@ -4,7 +4,7 @@
  * 
  *      - Initializing the vector
  *      - Creating and inserting accounts
- *      - Locating an account with a code (returns BankAccount object)
+ *      - Locating an account with a code (returns Account object)
  *      - Deleting an account
  *      - Rearranging files in the database (repositioning the vector to fill null elements)
  *      - Sorting the vector
@@ -18,7 +18,7 @@
 
 public class DataBase
 {
-    private BankAccount[] accountFiles;
+    private Account[] accountFiles;
     private int index;
     
     // Constructor
@@ -30,8 +30,8 @@ public class DataBase
     }
     
     // Getter for a copy of the database vector for iteration
-    public BankAccount[] getAccountFiles(){
-        BankAccount[] copyOfAccountFiles = new BankAccount[this.index];
+    public Account[] getAccountFiles(){
+        Account[] copyOfAccountFiles = new Account[this.index];
         
         for(int i = 0; i < this.index; i++){
             
@@ -50,12 +50,12 @@ public class DataBase
     // Intialize the database vector
     public void initializeDatabase(int size){
         
-        this.accountFiles = new BankAccount[size];
+        this.accountFiles = new Account[size];
     
     }
     
     // Insert an account on the database
-    public boolean insertAccount(BankAccount account){
+    public boolean insertAccount(Account account){
 
         if(this.index >= accountFiles.length){
             
@@ -73,7 +73,7 @@ public class DataBase
     // System.out.println("\nError: Account could not be saved. Max number of accounts reached.");
     
     // Locate an account on the database via code
-    public BankAccount locateAccount(int code){
+    public Account locateAccount(int code){
         
         int accountCode;
         
@@ -97,7 +97,7 @@ public class DataBase
     // System.out.println("\nError: Account does not exist.");
 
     // Locate an account on the database via code
-    public BankAccount locateAccount(String username){
+    public Account locateAccount(String username){
         
         String accountName;
         
@@ -123,7 +123,7 @@ public class DataBase
     // Delete an account from the database via code
     public boolean deleteAccount(int code){
         
-        BankAccount aux = locateAccount(code);
+        Account aux = locateAccount(code);
         
         for(int i = 0; i < this.index; i++){
             
@@ -163,7 +163,7 @@ public class DataBase
             
             for(int j = i + 1; j < this.accountFiles.length; j++){
                 
-                BankAccount temp;
+                Account temp;
                 
                 if(accountFiles[j].getCode() < accountFiles[i].getCode()){
                     temp = accountFiles[i];

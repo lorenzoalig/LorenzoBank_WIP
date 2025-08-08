@@ -27,7 +27,7 @@ public class BankAccount
     private String password;
     
     // Constructor
-    public BankAccount(String username, String password){
+    public Account(String username, String password){
         
         this.code = tracker + 100;
         this.balance = 0;
@@ -106,7 +106,7 @@ public class BankAccount
     }
     
     // Transfer money between accounts
-    public boolean transfer(BankAccount receivingAccount, double amount){
+    public boolean transfer(Account receivingAccount, double amount){
         if(amount <= 0)
             return false;
         else if(this.balance < amount)
